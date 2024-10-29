@@ -1,32 +1,51 @@
-// C++ code for a traffic light simulation with a buzzer
-//
-int redPin = 8;
-int yellowPin = 10;
-int greenPin = 12;
-int buzzerPin = 7; // Buzzer conectado ao pino 7
+// Definindo os pinos dos LEDs e do buzzer
+const int ledVermelho = 11;
+const int ledAmarelo = 10;
+const int ledVerde = 9;
+const int buzzer = 7;
 
+// Função para inicializar as configurações
 void setup() {
-  pinMode(redPin, OUTPUT);
-  pinMode(yellowPin, OUTPUT);
-  pinMode(greenPin, OUTPUT);
-  pinMode(buzzerPin, OUTPUT); // Configura o pino do buzzer como saída
+  pinMode(ledVermelho, OUTPUT);
+  pinMode(ledAmarelo, OUTPUT);
+  pinMode(ledVerde, OUTPUT);
+  pinMode(buzzer, OUTPUT);
 }
 
+// Função para cada fase do semáforo com a luz correspondente e duração
+void faseSemaforo(int led, int duracao, bool buzzerAtivo = false) {
+  // Apaga todos os LEDs antes de acender o necessário
+  digitalWrite(ledVermelho, LOW);
+  digitalWrite(ledAmarelo, LOW);
+  digitalWrite(ledVerde, LOW);
+
+  // Acende o LED da fase atual
+  digitalWrite(led, HIGH);
+
+  // Ativa ou desativa o buzzer conforme necessário
+  if (buzzerAtivo) {
+    digitalWrite(buzzer, HIGH);
+  } else {
+    digitalWrite(buzzer, LOW);
+  }
+
+  delay(duracao);
+}
+
+// Função principal para o loop do semáforo
 void loop() {
-  // Luz vermelha e buzzer ligados
-  digitalWrite(redPin, HIGH);
-  digitalWrite(buzzerPin, HIGH); // Liga o buzzer junto com a luz vermelha
-  delay(5000); // Vermelho e buzzer ligados por 5 segundos
-  digitalWrite(redPin, LOW);
-  digitalWrite(buzzerPin, LOW); // Desliga o buzzer
+  // 1. Fase Vermelho: 6 segundos
+  faseSemaforo(ledVermelho, 6000);
 
-  // Luz verde acesa
-  digitalWrite(greenPin, HIGH);
-  delay(5000); // Verde por 5 segundos
-  digitalWrite(greenPin, LOW);
+  // 2. Fase Amarelo (transição): 2 segundos
+  faseSemaforo(ledAmarelo, 2000);
 
-  // Luz amarela acesa
-  digitalWrite(yellowPin, HIGH);
-  delay(2000); // Amarelo por 2 segundos
-  digitalWrite(yellowPin, LOW);
+  // 3. Fase Verde inicial: 2 segundos
+  faseSemaforo(ledVerde, 2000);
+
+  // 4. Fase Verde adicional para pedestres: 4 segundos
+  faseSemaforo(ledVerde, 4000, true);
+
+  // 5. Fase Amarelo (transição de volta): 2 segundos
+  faseSemaforo(ledAmarelo, 2000);
 }
